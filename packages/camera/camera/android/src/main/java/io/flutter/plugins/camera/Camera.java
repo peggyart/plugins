@@ -136,6 +136,7 @@ public class Camera {
     this.enableAudio = enableAudio;
     this.flutterTexture = flutterTexture;
     this.dartMessenger = dartMessenger;
+    this.enableTakePictureWithMaxResolution = enableTakePictureWithMaxResolution;
     this.cameraManager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
     this.applicationContext = activity.getApplicationContext();
     this.flashMode = FlashMode.auto;
