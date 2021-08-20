@@ -29,6 +29,7 @@ abstract class CameraEvent {
   /// Build a Camera Event, that relates a `cameraId`.
   ///
   /// The `cameraId` is the ID of the camera that triggered the event.
+  // ignore: unnecessary_null_comparison
   CameraEvent(this.cameraId) : assert(cameraId != null);
 
   @override
