@@ -113,6 +113,9 @@ class FakeController extends ValueNotifier<CameraValue>
 
   @override
   Future<void> unlockCaptureOrientation() async {}
+
+  @override
+  bool get enableTakePictureWithMaxResolution => true;
 }
 
 void main() {

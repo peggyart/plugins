@@ -1269,6 +1269,7 @@ class MockCameraPlatform extends Mock
     CameraDescription description,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
+    bool enableTakePictureWithMaxResolution = true
   }) =>
       mockPlatformException
           ? throw PlatformException(code: 'foo', message: 'bar')
