@@ -62,11 +62,10 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
       this.cameraId = -1;
       return;
     }
-
-    configureResolution(resolutionPreset, cameraId);
-
+    
     try {
       cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraName);
+      configureResolution(resolutionPreset, cameraId);
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }
