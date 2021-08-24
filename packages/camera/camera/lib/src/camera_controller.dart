@@ -206,6 +206,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   CameraController(
     this.description,
     this.resolutionPreset, {
+    this.enableTakePictureWithMaxResolution = false,
     this.enableAudio = true,
     this.imageFormatGroup,
   }) : super(const CameraValue.uninitialized());
@@ -228,6 +229,9 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// When null the imageFormat will fallback to the platforms default.
   final ImageFormatGroup? imageFormatGroup;
+
+  /// Enables the maximum device resolution to capture
+  final bool enableTakePictureWithMaxResolution;
 
   /// The id of a camera that hasn't been initialized.
   @visibleForTesting
@@ -272,6 +276,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       _cameraId = await CameraPlatform.instance.createCamera(
         description,
         resolutionPreset,
+        enableTakePictureWithMaxResolution: enableTakePictureWithMaxResolution,
         enableAudio: enableAudio,
       );
 

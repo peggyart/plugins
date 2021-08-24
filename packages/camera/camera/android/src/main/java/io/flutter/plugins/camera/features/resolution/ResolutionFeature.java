@@ -4,10 +4,23 @@
 
 package io.flutter.plugins.camera.features.resolution;
 
+import android.content.Context;
+import android.graphics.ImageFormat;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.CamcorderProfile;
+import android.util.Log;
 import android.util.Size;
 import androidx.annotation.VisibleForTesting;
+import android.hardware.camera2.CameraManager;
+import android.app.Activity;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.features.CameraFeature;
 
@@ -25,6 +38,9 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   private ResolutionPreset currentSetting;
   private int cameraId;
 
+  private final Boolean enableTakePictureWithMaxResolution;
+  private CameraCharacteristics cameraCharacteristics;
+
   /**
    * Creates a new instance of the {@link ResolutionFeature}.
    *
@@ -33,16 +49,27 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
    * @param cameraName Camera identifier of the camera for which to configure the resolution.
    */
   public ResolutionFeature(
-      CameraProperties cameraProperties, ResolutionPreset resolutionPreset, String cameraName) {
+          final Activity activity,
+      CameraProperties cameraProperties, ResolutionPreset resolutionPreset, String cameraName,
+          Boolean enableTakePictureWithMaxResolution) {
     super(cameraProperties);
     this.currentSetting = resolutionPreset;
+    this.enableTakePictureWithMaxResolution = enableTakePictureWithMaxResolution;
+    CameraManager cameraManager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
     try {
       this.cameraId = Integer.parseInt(cameraName, 10);
     } catch (NumberFormatException e) {
       this.cameraId = -1;
       return;
     }
+
     configureResolution(resolutionPreset, cameraId);
+
+    try {
+      cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraName);
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -100,14 +127,10 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   }
 
   @VisibleForTesting
-  static Size computeBestPreviewSize(int cameraId, ResolutionPreset preset) {
-    if (preset.ordinal() > ResolutionPreset.high.ordinal()) {
-      preset = ResolutionPreset.high;
-    }
-
-    CamcorderProfile profile =
-        getBestAvailableCamcorderProfileForResolutionPreset(cameraId, preset);
-    return new Size(profile.videoFrameWidth, profile.videoFrameHeight);
+  static Size computeBestCaptureSize(StreamConfigurationMap streamConfigurationMap) {
+    return Collections.max(
+            Arrays.asList(streamConfigurationMap.getOutputSizes(ImageFormat.JPEG)),
+            new CompareSizesByArea());
   }
 
   /**
@@ -170,7 +193,24 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     }
     recordingProfile =
         getBestAvailableCamcorderProfileForResolutionPreset(cameraId, resolutionPreset);
-    captureSize = new Size(recordingProfile.videoFrameWidth, recordingProfile.videoFrameHeight);
-    previewSize = computeBestPreviewSize(cameraId, resolutionPreset);
+    previewSize = new Size(recordingProfile.videoFrameWidth, recordingProfile.videoFrameHeight);
+    if (enableTakePictureWithMaxResolution) {
+      captureSize =
+              computeBestCaptureSize(
+                      cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP));
+      Log.i("Camera", "enableTakePictureWithMaxResolution");
+    } else {
+      captureSize = new Size(recordingProfile.videoFrameWidth, recordingProfile.videoFrameHeight);
+    }
+    Log.i("Camera", "[Preview Resolution] :" + previewSize);
+    Log.i("Camera", "[Capture Resolution] :" + captureSize);
+  }
+
+  private static class CompareSizesByArea implements Comparator<Size> {
+    @Override
+    public int compare(Size lhs, Size rhs) {
+      return Long.signum(
+              (long) lhs.getWidth() * lhs.getHeight() - (long) rhs.getWidth() * rhs.getHeight());
+    }
   }
 }

@@ -133,6 +133,9 @@ class Camera
 
   private MethodChannel.Result flutterResult;
 
+  /** Enable device to take maximum quality pictures */
+  private final boolean enableTakePictureWithMaxResolution;
+
   public Camera(
       final Activity activity,
       final SurfaceTextureEntry flutterTexture,
@@ -140,6 +143,7 @@ class Camera
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
       final ResolutionPreset resolutionPreset,
+      final boolean enableTakePictureWithMaxResolution,
       final boolean enableAudio) {
 
     if (activity == null) {
@@ -150,6 +154,7 @@ class Camera
     this.flutterTexture = flutterTexture;
     this.dartMessenger = dartMessenger;
     this.applicationContext = activity.getApplicationContext();
+    this.enableTakePictureWithMaxResolution = enableTakePictureWithMaxResolution;
     this.cameraProperties = cameraProperties;
     this.cameraFeatureFactory = cameraFeatureFactory;
     this.cameraFeatures =

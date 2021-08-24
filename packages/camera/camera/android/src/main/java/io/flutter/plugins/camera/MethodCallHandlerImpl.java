@@ -361,6 +361,8 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler, Li
     String cameraName = call.argument("cameraName");
     String preset = call.argument("resolutionPreset");
     boolean enableAudio = call.argument("enableAudio");
+    boolean enableTakePictureWithMaxResolution =
+            call.argument("enableTakePictureWithMaxResolution");
 
     TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture =
         textureRegistry.createSurfaceTexture();
@@ -383,6 +385,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler, Li
             dartMessenger,
             cameraProperties,
             resolutionPreset,
+            enableTakePictureWithMaxResolution,
             enableAudio);
 
     if (lifecycle != null) {
