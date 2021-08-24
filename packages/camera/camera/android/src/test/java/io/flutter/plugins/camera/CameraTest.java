@@ -132,7 +132,7 @@ public class CameraTest {
     verify(mockCameraFeatureFactory, times(1)).createFpsRangeFeature(mockCameraProperties);
     verify(mockCameraFeatureFactory, times(1)).createNoiseReductionFeature(mockCameraProperties);
     verify(mockCameraFeatureFactory, times(1))
-        .createResolutionFeature(mockCameraProperties, resolutionPreset, cameraName);
+        .createResolutionFeature(mockCameraProperties, mockActivity, resolutionPreset, cameraName);
     verify(mockCameraFeatureFactory, times(1)).createZoomLevelFeature(mockCameraProperties);
     assertNotNull("should create a camera", camera);
   }
@@ -225,7 +225,7 @@ public class CameraTest {
   @Test
   public void getRecordingProfile() {
     ResolutionFeature mockResolutionFeature =
-        mockCameraFeatureFactory.createResolutionFeature(mockCameraProperties, null, null);
+        mockCameraFeatureFactory.createResolutionFeature(mockCameraProperties, null,null, null);
     CamcorderProfile mockCamcorderProfile = mock(CamcorderProfile.class);
 
     when(mockResolutionFeature.getRecordingProfile()).thenReturn(mockCamcorderProfile);
@@ -797,6 +797,7 @@ public class CameraTest {
     @Override
     public ResolutionFeature createResolutionFeature(
         @NonNull CameraProperties cameraProperties,
+        @NonNull Activity activity,
         ResolutionPreset initialSetting,
         String cameraName) {
       return mockResolutionFeature;

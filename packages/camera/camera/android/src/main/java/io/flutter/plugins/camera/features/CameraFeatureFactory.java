@@ -76,6 +76,7 @@ public interface CameraFeatureFactory {
    */
   ResolutionFeature createResolutionFeature(
       @NonNull CameraProperties cameraProperties,
+      @NonNull Activity activity,
       ResolutionPreset initialSetting,
       String cameraName);
 
