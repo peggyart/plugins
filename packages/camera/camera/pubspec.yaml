@@ -25,6 +25,7 @@ dependencies:
     git:
       url: https://github.com/peggyart/plugins.git
       path: packages/camera/camera_platform_interface
+      ref: bc0cb776fe03f6e7be7a1272d24f1cfbb33b9075
   flutter:
     sdk: flutter
   pedantic: ^1.10.0
