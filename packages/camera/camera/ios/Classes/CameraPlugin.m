@@ -1399,8 +1399,8 @@ enableTakePictureWithMaxResolution:(BOOL)enableTakePictureWithMaxResolution
     NSError *error;
     FLTCam *cam = [[FLTCam alloc] initWithCameraName:cameraName
                                     resolutionPreset:resolutionPreset
-                                         enableAudio:[enableAudio boolValue]
                   enableTakePictureWithMaxResolution:[enableTakePictureWithMaxResolution boolValue]
+                                         enableAudio:[enableAudio boolValue]
                                          orientation:[[UIDevice currentDevice] orientation]
                                        dispatchQueue:_dispatchQueue
                                                error:&error];
