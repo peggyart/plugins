@@ -19,6 +19,8 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.OutputConfiguration;
 import android.hardware.camera2.params.SessionConfiguration;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
 import android.media.Image;
@@ -68,6 +70,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -154,6 +158,11 @@ class Camera
 
   private MethodChannel.Result flutterResult;
 
+  private List<Size> availableResolutions;
+  private int widthSize;
+  private int heightSize;
+  private int resolution;
+
   /** A CameraDeviceWrapper implementation that forwards calls to a CameraDevice. */
   private class DefaultCameraDeviceWrapper implements CameraDeviceWrapper {
     private final CameraDevice cameraDevice;
@@ -204,6 +213,7 @@ class Camera
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
     }
+    this.resolution = 0;
     this.activity = activity;
     this.enableAudio = enableAudio;
     this.flutterTexture = flutterTexture;
@@ -274,6 +284,8 @@ class Camera
             .build();
   }
 
+
+
   @SuppressLint("MissingPermission")
   public void open(String imageFormatGroup) throws CameraAccessException {
     final ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
@@ -289,11 +301,14 @@ class Camera
       return;
     }
 
+    CameraManager cameraManager = CameraUtils.getCameraManager(activity);
+    this.availableResolutions = getAvailableResolutions(cameraManager);
+
     // Always capture using JPEG format.
     pictureImageReader =
         ImageReader.newInstance(
-            resolutionFeature.getCaptureSize().getWidth(),
-            resolutionFeature.getCaptureSize().getHeight(),
+            availableResolutions.get(0).getWidth(),
+            availableResolutions.get(0).getHeight(),
             ImageFormat.JPEG,
             1);
 
@@ -303,15 +318,19 @@ class Camera
       Log.w(TAG, "The selected imageFormatGroup is not supported by Android. Defaulting to yuv420");
       imageFormat = ImageFormat.YUV_420_888;
     }
-    imageStreamReader =
+
+    this.widthSize = resolutionFeature.getPreviewSize().getWidth();
+    this.heightSize =  (int) (resolutionFeature.getPreviewSize().getWidth() * (3.0 / 4.0));
+
+     imageStreamReader =
         ImageReader.newInstance(
-            resolutionFeature.getPreviewSize().getWidth(),
-            resolutionFeature.getPreviewSize().getHeight(),
-            imageFormat,
-            1);
+          this.widthSize,
+          this.heightSize,
+          imageFormat,
+          1);
 
     // Open the camera.
-    CameraManager cameraManager = CameraUtils.getCameraManager(activity);
+
     cameraManager.openCamera(
         cameraProperties.getCameraName(),
         new CameraDevice.StateCallback() {
@@ -321,8 +340,7 @@ class Camera
             try {
               startPreview();
               dartMessenger.sendCameraInitializedEvent(
-                  resolutionFeature.getPreviewSize().getWidth(),
-                  resolutionFeature.getPreviewSize().getHeight(),
+                  widthSize, heightSize,
                   cameraFeatures.getExposureLock().getValue(),
                   cameraFeatures.getAutoFocus().getValue(),
                   cameraFeatures.getExposurePoint().checkIsSupported(),
@@ -396,12 +414,14 @@ class Camera
     // Create a new capture builder.
     previewRequestBuilder = cameraDevice.createCaptureRequest(templateType);
 
+
     // Build Flutter surface to render to.
     ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
     SurfaceTexture surfaceTexture = flutterTexture.surfaceTexture();
+  
+
     surfaceTexture.setDefaultBufferSize(
-        resolutionFeature.getPreviewSize().getWidth(),
-        resolutionFeature.getPreviewSize().getHeight());
+        this.widthSize, this.heightSize);
     Surface flutterSurface = new Surface(surfaceTexture);
     previewRequestBuilder.addTarget(flutterSurface);
 
@@ -1196,6 +1216,22 @@ class Camera
     stopBackgroundThread();
   }
 
+  private List<Size> getAvailableResolutions(CameraManager cameraManager) throws CameraAccessException {
+    final String[] cameraIds = cameraManager.getCameraIdList();
+    // camera 0 is the main
+    CameraCharacteristics cameraCharacteristics =
+            cameraManager.getCameraCharacteristics(cameraIds[0]);
+    StreamConfigurationMap streamConfigurationMap = cameraCharacteristics
+            .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+    Size[] availableResolutionsArray;
+    availableResolutionsArray = streamConfigurationMap.getOutputSizes(ImageFormat.JPEG);
+    List<Size> availableResolutions = Arrays.asList(availableResolutionsArray);
+    // Sort by descending area size
+    Collections.sort(availableResolutions, new CompareSizesByArea());
+    Collections.reverse(availableResolutions);
+    return availableResolutions;
+  }
+
   public void dispose() {
     Log.i(TAG, "dispose");
 
@@ -1236,5 +1272,28 @@ class Camera
     public static Handler create(Looper looper) {
       return new Handler(looper);
     }
+  }
+
+
+  static class CompareSizesByArea implements Comparator<Size> {
+    @Override
+    public int compare(final Size lhs, final Size rhs) {
+      return Long.signum(
+              (long) lhs.getWidth() * lhs.getHeight() - (long) rhs.getWidth() * rhs.getHeight());
+    }
+  }
+
+  /** Set a minimum required resolution to create a fingerprint.
+   */
+  public void setMinimumResolution(int resolution) {
+    this.resolution = resolution;
+  }
+
+  /** Check if the camera of the device has enough resolution 
+  */
+  public boolean isCameraEnough() {
+    if(this.resolution == 0) return true;
+    return availableResolutions.get(0).getWidth() > this.resolution &&
+            availableResolutions.get(0).getHeight() > this.resolution;
   }
 }

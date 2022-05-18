@@ -358,6 +358,28 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
           result.success(null);
           break;
         }
+        case "setMinimumResolution":
+        {
+          int resolution = call.argument("resolution");
+          
+          try {
+            camera.setMinimumResolution(resolution);
+            result.success(null);
+          } catch (Exception e) {
+            handleException(e, result);
+          }
+          break;
+        }
+        case "isCameraEnough":
+        {
+          try {
+            boolean isEnough = camera.isCameraEnough();
+            result.success(isEnough);
+          } catch (Exception e) {
+            handleException(e, result);
+          }
+          break;
+        }
       default:
         result.notImplemented();
         break;

@@ -80,6 +80,7 @@ class MethodChannelCamera extends CameraPlatform {
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
+    bool isLandscape = false,
   }) async {
     try {
       final Map<String, dynamic>? reply = await _channel
@@ -89,6 +90,7 @@ class MethodChannelCamera extends CameraPlatform {
             ? _serializeResolutionPreset(resolutionPreset)
             : null,
         'enableAudio': enableAudio,
+        'isLandscape': isLandscape,
       });
 
       return reply!['cameraId']! as int;
@@ -528,6 +530,33 @@ class MethodChannelCamera extends CameraPlatform {
         break;
       default:
         throw MissingPluginException();
+    }
+  }
+
+  @override
+  Future<void> setMinimumResolution(int resolution) async {
+    try {
+      await _channel.invokeMethod<double>(
+        'setMinimumResolution',
+        <String, dynamic>{
+          'resolution': resolution,
+        },
+      );
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Check if the camera is enough when [setMinimumResolution]
+  /// has been added.
+  @override
+  Future<bool> isCameraEnough() async {
+    try {
+      final bool? isEnough =
+          await _channel.invokeMethod<bool>('isCameraEnough');
+      return isEnough ?? false;
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
     }
   }
 }

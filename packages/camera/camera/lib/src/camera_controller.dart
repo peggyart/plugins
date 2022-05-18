@@ -854,4 +854,23 @@ class CameraController extends ValueNotifier<CameraValue> {
       super.removeListener(listener);
     }
   }
+
+  /// Set the minimum required capture resolution to create a fingerprint
+  Future<void> setMinimumResolution(int resolution) {
+    try {
+      return CameraPlatform.instance.setMinimumResolution(resolution);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Check if the camera is enough when [setMinimumResolution]
+  /// has been added.
+  Future<bool> isCameraEnough() {
+    try {
+      return CameraPlatform.instance.isCameraEnough();
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
 }
