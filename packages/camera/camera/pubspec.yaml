@@ -25,8 +25,7 @@ flutter:
         pluginClass: CameraPlugin
 
 dependencies:
-  camera_platform_interface: 
-    path: ../camera_platform_interface
+  camera_platform_interface: ^2.1.0
   flutter:
     sdk: flutter
   flutter_plugin_android_lifecycle: ^2.0.2
@@ -40,3 +39,10 @@ dev_dependencies:
   mockito: ^5.0.0
   plugin_platform_interface: ^2.0.0
   video_player: ^2.0.0
+
+dependency_overrides:
+  camera_platform_interface:
+    git:
+      url: https://github.com/peggyart/plugins.git
+      ref: peggy-camera
+      path: packages/camera/camera_platform_interface
