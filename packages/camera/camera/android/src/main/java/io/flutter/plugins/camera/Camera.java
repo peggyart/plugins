@@ -123,6 +123,7 @@ class Camera
 
   private final SurfaceTextureEntry flutterTexture;
   private final boolean enableAudio;
+  private final boolean isLandscape;
   private final Context applicationContext;
   private final DartMessenger dartMessenger;
   private final CameraProperties cameraProperties;
@@ -157,6 +158,8 @@ class Camera
   private CameraCaptureProperties captureProps;
 
   private MethodChannel.Result flutterResult;
+  private int widthSize;
+  private int heightSize;
 
   /** A CameraDeviceWrapper implementation that forwards calls to a CameraDevice. */
   private class DefaultCameraDeviceWrapper implements CameraDeviceWrapper {
@@ -203,13 +206,16 @@ class Camera
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
       final ResolutionPreset resolutionPreset,
-      final boolean enableAudio) {
+      final boolean enableAudio,
+      final boolean isLandscape
+      ) {
 
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
     }
     this.activity = activity;
     this.enableAudio = enableAudio;
+    this.isLandscape = isLandscape;
     this.flutterTexture = flutterTexture;
     this.dartMessenger = dartMessenger;
     this.applicationContext = activity.getApplicationContext();
@@ -312,12 +318,22 @@ class Camera
       Log.w(TAG, "The selected imageFormatGroup is not supported by Android. Defaulting to yuv420");
       imageFormat = ImageFormat.YUV_420_888;
     }
-    imageStreamReader =
+
+    // Check if we need the landscape
+    if(isLandscape) {
+        this.widthSize =  (int) (resolutionFeature.getPreviewSize().getWidth() * 1.25);
+        this.heightSize = resolutionFeature.getPreviewSize().getWidth();
+    } else {
+        this.widthSize =  (int) (resolutionFeature.getPreviewSize().getWidth() * 1.25);
+        this.heightSize = resolutionFeature.getPreviewSize().getWidth();
+    }
+
+     imageStreamReader =
         ImageReader.newInstance(
-            resolutionFeature.getPreviewSize().getWidth(),
-            resolutionFeature.getPreviewSize().getHeight(),
-            imageFormat,
-            1);
+          this.widthSize,
+          this.heightSize,
+          imageFormat,
+          1);
 
     // Open the camera.
 
@@ -330,8 +346,7 @@ class Camera
             try {
               startPreview();
               dartMessenger.sendCameraInitializedEvent(
-                  resolutionFeature.getPreviewSize().getWidth(),
-                  resolutionFeature.getPreviewSize().getHeight(),
+                  widthSize, heightSize,
                   cameraFeatures.getExposureLock().getValue(),
                   cameraFeatures.getAutoFocus().getValue(),
                   cameraFeatures.getExposurePoint().checkIsSupported(),
@@ -405,12 +420,14 @@ class Camera
     // Create a new capture builder.
     previewRequestBuilder = cameraDevice.createCaptureRequest(templateType);
 
+
     // Build Flutter surface to render to.
     ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
     SurfaceTexture surfaceTexture = flutterTexture.surfaceTexture();
+  
+
     surfaceTexture.setDefaultBufferSize(
-        resolutionFeature.getPreviewSize().getWidth(),
-        resolutionFeature.getPreviewSize().getHeight());
+        this.widthSize, this.heightSize);
     Surface flutterSurface = new Surface(surfaceTexture);
     previewRequestBuilder.addTarget(flutterSurface);
 

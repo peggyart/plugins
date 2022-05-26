@@ -80,6 +80,7 @@ class MethodChannelCamera extends CameraPlatform {
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
+    bool isLandscape = false,
   }) async {
     try {
       final Map<String, dynamic>? reply = await _channel
@@ -89,6 +90,7 @@ class MethodChannelCamera extends CameraPlatform {
             ? _serializeResolutionPreset(resolutionPreset)
             : null,
         'enableAudio': enableAudio,
+        'isLandscape': isLandscape,
       });
 
       return reply!['cameraId']! as int;

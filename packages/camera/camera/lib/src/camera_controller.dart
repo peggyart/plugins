@@ -230,7 +230,11 @@ class CameraController extends ValueNotifier<CameraValue> {
     this.resolutionPreset, {
     this.enableAudio = true,
     this.imageFormatGroup,
+    this.isLandscape = false,
   }) : super(const CameraValue.uninitialized());
+
+  // Used to force device orientation to capture correct aspect ratio
+  final bool isLandscape;
 
   /// The properties of the camera device controlled by this controller.
   final CameraDescription description;
@@ -298,6 +302,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         description,
         resolutionPreset,
         enableAudio: enableAudio,
+        isLandscape: isLandscape,
       );
 
       _unawaited(CameraPlatform.instance
