@@ -319,30 +319,68 @@ NSString *const errorMethod = @"error";
 }
 
 - (void)setCaptureSessionPreset:(FLTResolutionPreset)resolutionPreset {
-  switch (resolutionPreset) {
-    case FLTResolutionPresetMax:
-      _captureSession.sessionPreset = AVCaptureSessionPresetPhoto;
-      _previewSize =
-          CGSizeMake((_captureDevice.activeFormat.highResolutionStillImageDimensions.width * 1.25),
-                      _captureDevice.activeFormat.highResolutionStillImageDimensions.width);
-      break;
-    case FLTResolutionPresetUltraHigh:
-    case FLTResolutionPresetVeryHigh:
-    case FLTResolutionPresetHigh:
-    case FLTResolutionPresetMedium:
-    case FLTResolutionPresetLow:
-    default:
-      if (![_captureSession canSetSessionPreset:AVCaptureSessionPresetLow]) {
-        NSError *error =
-            [NSError errorWithDomain:NSCocoaErrorDomain
-                                code:NSURLErrorUnknown
-                            userInfo:@{
-                              NSLocalizedDescriptionKey :
-                                  @"No capture session available for current capture session."
-                            }];
-        @throw error;
-      }
+  if ([_captureSession canSetSessionPreset:AVCaptureSessionPresetPhoto]) {
+    _captureSession.sessionPreset = AVCaptureSessionPresetPhoto;
+    _previewSize =
+        CGSizeMake((_captureDevice.activeFormat.highResolutionStillImageDimensions.width * 1.25),
+                    _captureDevice.activeFormat.highResolutionStillImageDimensions.width);
+  } else {
+    switch (resolutionPreset) {
+      case FLTResolutionPresetMax:
+      case FLTResolutionPresetUltraHigh:
+        if ([_captureSession canSetSessionPreset:AVCaptureSessionPreset3840x2160]) {
+          _captureSession.sessionPreset = AVCaptureSessionPreset3840x2160;
+          _previewSize = CGSizeMake(3840, 2160);
+          break;
+        }
+        if ([_captureSession canSetSessionPreset:AVCaptureSessionPresetHigh]) {
+          _captureSession.sessionPreset = AVCaptureSessionPresetHigh;
+          _previewSize =
+              CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
+                        _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
+          break;
+        }
+      case FLTResolutionPresetVeryHigh:
+        if ([_captureSession canSetSessionPreset:AVCaptureSessionPreset1920x1080]) {
+          _captureSession.sessionPreset = AVCaptureSessionPreset1920x1080;
+          _previewSize = CGSizeMake(1920, 1080);
+          break;
+        }
+      case FLTResolutionPresetHigh:
+        if ([_captureSession canSetSessionPreset:AVCaptureSessionPreset1280x720]) {
+          _captureSession.sessionPreset = AVCaptureSessionPreset1280x720;
+          _previewSize = CGSizeMake(1280, 720);
+          break;
+        }
+      case FLTResolutionPresetMedium:
+        if ([_captureSession canSetSessionPreset:AVCaptureSessionPreset640x480]) {
+          _captureSession.sessionPreset = AVCaptureSessionPreset640x480;
+          _previewSize = CGSizeMake(640, 480);
+          break;
+        }
+      case FLTResolutionPresetLow:
+        if ([_captureSession canSetSessionPreset:AVCaptureSessionPreset352x288]) {
+          _captureSession.sessionPreset = AVCaptureSessionPreset352x288;
+          _previewSize = CGSizeMake(352, 288);
+          break;
+        }
+      default:
+        if ([_captureSession canSetSessionPreset:AVCaptureSessionPresetLow]) {
+          _captureSession.sessionPreset = AVCaptureSessionPresetLow;
+          _previewSize = CGSizeMake(352, 288);
+        } else {
+          NSError *error =
+              [NSError errorWithDomain:NSCocoaErrorDomain
+                                  code:NSURLErrorUnknown
+                              userInfo:@{
+                                NSLocalizedDescriptionKey :
+                                    @"No capture session available for current capture session."
+                              }];
+          @throw error;
+        }
+    }
   }
+  NSLog(@"DEBUG: SessionPreset -> %@", _captureSession.sessionPreset);
 }
 
 - (void)captureOutput:(AVCaptureOutput *)output
