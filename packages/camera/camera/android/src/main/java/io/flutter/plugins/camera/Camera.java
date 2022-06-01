@@ -205,8 +205,7 @@ class Camera
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
       final ResolutionPreset resolutionPreset,
-      final boolean enableAudio,
-      ) {
+      final boolean enableAudio) {
 
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
