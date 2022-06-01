@@ -123,7 +123,6 @@ class Camera
 
   private final SurfaceTextureEntry flutterTexture;
   private final boolean enableAudio;
-  private final boolean isLandscape;
   private final Context applicationContext;
   private final DartMessenger dartMessenger;
   private final CameraProperties cameraProperties;
@@ -207,7 +206,6 @@ class Camera
       final CameraProperties cameraProperties,
       final ResolutionPreset resolutionPreset,
       final boolean enableAudio,
-      final boolean isLandscape
       ) {
 
     if (activity == null) {
@@ -215,7 +213,6 @@ class Camera
     }
     this.activity = activity;
     this.enableAudio = enableAudio;
-    this.isLandscape = isLandscape;
     this.flutterTexture = flutterTexture;
     this.dartMessenger = dartMessenger;
     this.applicationContext = activity.getApplicationContext();
@@ -319,14 +316,8 @@ class Camera
       imageFormat = ImageFormat.YUV_420_888;
     }
 
-    // Check if we need the landscape
-    if(isLandscape) {
-        this.widthSize =  (int) (resolutionFeature.getPreviewSize().getWidth() * 1.25);
-        this.heightSize = resolutionFeature.getPreviewSize().getWidth();
-    } else {
-        this.widthSize =  (int) (resolutionFeature.getPreviewSize().getWidth() * 1.25);
-        this.heightSize = resolutionFeature.getPreviewSize().getWidth();
-    }
+    this.widthSize =  (int) (resolutionFeature.getPreviewSize().getWidth() * (4.0 / 3.0));
+    this.heightSize = resolutionFeature.getPreviewSize().getWidth();
 
      imageStreamReader =
         ImageReader.newInstance(

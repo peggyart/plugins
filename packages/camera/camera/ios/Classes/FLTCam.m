@@ -322,7 +322,7 @@ NSString *const errorMethod = @"error";
   if ([_captureSession canSetSessionPreset:AVCaptureSessionPresetPhoto]) {
     _captureSession.sessionPreset = AVCaptureSessionPresetPhoto;
     _previewSize =
-        CGSizeMake((_captureDevice.activeFormat.highResolutionStillImageDimensions.width * 1.25),
+        CGSizeMake((_captureDevice.activeFormat.highResolutionStillImageDimensions.width * (4.0 / 3.0)),
                     _captureDevice.activeFormat.highResolutionStillImageDimensions.width);
   } else {
     switch (resolutionPreset) {
