@@ -315,8 +315,8 @@ class Camera
       imageFormat = ImageFormat.YUV_420_888;
     }
 
-    this.widthSize =  resolutionFeature.getPreviewSize().getWidth();
-    this.heightSize = resolutionFeature.getPreviewSize().getHeight();
+    this.widthSize =  (int) (resolutionFeature.getPreviewSize().getWidth() * 1.25);
+    this.heightSize = resolutionFeature.getPreviewSize().getWidth();
 
      imageStreamReader =
         ImageReader.newInstance(
