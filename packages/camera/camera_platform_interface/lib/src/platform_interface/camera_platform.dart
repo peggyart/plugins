@@ -250,8 +250,13 @@ abstract class CameraPlatform extends PlatformInterface {
     throw UnimplementedError('dispose() is not implemented.');
   }
 
-    /// Get the current resolution of this camera.
-  Future<List<int>?> getCameraResolution() {
-    throw UnimplementedError('getCameraResolution() is not implemented.');
+  /// Get the current resolution of this camera.
+  Future<int?> getResolutionWidth() async {
+    throw UnimplementedError('getResolutionWidth() is not implemented.');
+  }
+
+  /// Get the current resolution of this camera.
+  Future<int?> getResolutionHeight() async {
+    throw UnimplementedError('getResolutionHeight() is not implemented.');
   }
 }
