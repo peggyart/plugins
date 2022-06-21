@@ -534,8 +534,8 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
-  Future<Size?> getCameraResolution() async {
-    return await _channel.invokeMethod<Size>(
+  Future<List<double>?> getCameraResolution() async {
+    return await _channel.invokeMethod<List<double>?>(
       'getCameraResolution',
     );
   }

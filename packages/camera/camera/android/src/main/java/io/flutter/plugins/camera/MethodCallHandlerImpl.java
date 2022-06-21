@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.hardware.camera2.CameraAccessException;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Size;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
@@ -287,6 +289,18 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
           try {
             float minZoomLevel = camera.getMinZoomLevel();
             result.success(minZoomLevel);
+          } catch (Exception e) {
+            handleException(e, result);
+          }
+          break;
+        }
+        case "getCameraResolution":
+        {
+          assert camera != null;
+
+          try {
+            Size cameraResolution = camera.getCameraResolution();
+            result.success(cameraResolution);
           } catch (Exception e) {
             handleException(e, result);
           }

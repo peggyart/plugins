@@ -201,6 +201,8 @@
       [_camera getMaxZoomLevelWithResult:result];
     } else if ([@"getMinZoomLevel" isEqualToString:call.method]) {
       [_camera getMinZoomLevelWithResult:result];
+    } else if ([@"getCameraResolution" isEqualToString:call.method]) {
+      [_camera getCameraResolutionWithResult:result];
     } else if ([@"setZoomLevel" isEqualToString:call.method]) {
       CGFloat zoom = ((NSNumber *)argsMap[@"zoom"]).floatValue;
       [_camera setZoomLevel:zoom Result:result];

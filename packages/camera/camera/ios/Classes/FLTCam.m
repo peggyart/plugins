@@ -962,6 +962,11 @@ NSString *const errorMethod = @"error";
   [result sendSuccessWithData:[NSNumber numberWithFloat:minZoomFactor]];
 }
 
+- (void)getCameraResolutionWithResult:(FLTThreadSafeFlutterResult *)result {
+  CGSize resolutionSize = [self getCameraResolutionFactor];
+  [result sendSuccessWithData:@(resolutionSize)];
+}
+
 - (void)setZoomLevel:(CGFloat)zoom Result:(FLTThreadSafeFlutterResult *)result {
   CGFloat maxAvailableZoomFactor = [self getMaxAvailableZoomFactor];
   CGFloat minAvailableZoomFactor = [self getMinAvailableZoomFactor];
@@ -1000,6 +1005,11 @@ NSString *const errorMethod = @"error";
   } else {
     return _captureDevice.activeFormat.videoMaxZoomFactor;
   }
+}
+
+- (CGSize)getCameraResolutionFactor {
+  return CGSizeMake((_captureDevice.activeFormat.highResolutionStillImageDimensions.width * 1.25),
+                     _captureDevice.activeFormat.highResolutionStillImageDimensions.width);
 }
 
 - (BOOL)setupWriterForPath:(NSString *)path {

@@ -1014,6 +1014,11 @@ class Camera
     return cameraFeatures.getZoomLevel().getMinimumZoomLevel();
   }
 
+  /** Get the Capture size resolution */
+  public Size getCameraResolution() {
+    return cameraFeatures.getResolution().getCaptureSize();
+  }
+
   /** Shortcut to get current recording profile. Legacy method provides support for SDK < 31. */
   CamcorderProfile getRecordingProfileLegacy() {
     return cameraFeatures.getResolution().getRecordingProfileLegacy();

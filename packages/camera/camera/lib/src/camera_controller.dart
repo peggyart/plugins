@@ -854,4 +854,14 @@ class CameraController extends ValueNotifier<CameraValue> {
       super.removeListener(listener);
     }
   }
+
+  /// Get the device resolution from the current camera.
+  Future<Size?> getCameraResolution() async {
+    _throwIfNotInitialized('getCameraResolution');
+    try {
+      return await CameraPlatform.instance.getCameraResolution();
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
 }
