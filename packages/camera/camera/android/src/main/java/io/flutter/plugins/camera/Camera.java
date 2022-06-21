@@ -159,6 +159,7 @@ class Camera
   private MethodChannel.Result flutterResult;
   private int widthSize;
   private int heightSize;
+  private List<Size> availableResolutions;
 
   /** A CameraDeviceWrapper implementation that forwards calls to a CameraDevice. */
   private class DefaultCameraDeviceWrapper implements CameraDeviceWrapper {
@@ -298,7 +299,7 @@ class Camera
     }
 
     CameraManager cameraManager = CameraUtils.getCameraManager(activity);
-    final List<Size> availableResolutions = getAvailableResolutions(cameraManager);
+    this.availableResolutions = getAvailableResolutions(cameraManager);
 
     // Always capture using JPEG format.
     pictureImageReader =
@@ -1014,10 +1015,14 @@ class Camera
     return cameraFeatures.getZoomLevel().getMinimumZoomLevel();
   }
 
-  /** Get the Capture size resolution */
-  public List<int>? getCameraResolution() {
-    return [cameraFeatures.getResolution().getCaptureSize().width,
-            cameraFeatures.getResolution().getCaptureSize().height];
+  /** Get the resolution width size */
+  public int getResolutionWidth() {
+    return availableResolutions.get(0).getWidth();
+  }
+
+  /** Get the resolution height size */
+  public int getResolutionHeight() {
+    return availableResolutions.get(0).getHeight();
   }
 
   /** Shortcut to get current recording profile. Legacy method provides support for SDK < 31. */

@@ -93,7 +93,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)stopImageStream;
 - (void)getMaxZoomLevelWithResult:(FLTThreadSafeFlutterResult *)result;
 - (void)getMinZoomLevelWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)getCameraResolutionWithResult:(FLTThreadSafeFlutterResult *)result;
+- (void)getResolutionWidthWithResult:(FLTThreadSafeFlutterResult *)result;
+- (void)getResolutionHeightWithResult:(FLTThreadSafeFlutterResult *)result;
 - (void)setZoomLevel:(CGFloat)zoom Result:(FLTThreadSafeFlutterResult *)result;
 - (void)setUpCaptureSessionForAudio;
 

@@ -294,12 +294,24 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
           }
           break;
         }
-        case "getCameraResolution":
+        case "getResolutionWidth":
         {
           assert camera != null;
 
           try {
-            List<int>? cameraResolution = camera.getCameraResolution();
+           int cameraResolution = camera.getResolutionWidth();
+            result.success(cameraResolution);
+          } catch (Exception e) {
+            handleException(e, result);
+          }
+          break;
+        }
+        case "getResolutionHeight":
+        {
+          assert camera != null;
+
+          try {
+            int cameraResolution = camera.getResolutionHeight();
             result.success(cameraResolution);
           } catch (Exception e) {
             handleException(e, result);

@@ -962,9 +962,14 @@ NSString *const errorMethod = @"error";
   [result sendSuccessWithData:[NSNumber numberWithFloat:minZoomFactor]];
 }
 
-- (void)getCameraResolutionWithResult:(FLTThreadSafeFlutterResult *)result {
-  Array<int> resolutionSize = [self getCameraResolutionFactor];
-  [result sendSuccessWithData:@(resolutionSize)];
+- (void)getResolutionWidthWithResult:(FLTThreadSafeFlutterResult *)result {
+  int widthSize = [self getResolutionWidth];
+  [result sendSuccessWithData: [NSNumber numberWithInt:widthSize]];
+}
+
+- (void)getResolutionHeightWithResult:(FLTThreadSafeFlutterResult *)result {
+  int heightSize = [self getResolutionHeight];
+  [result sendSuccessWithData: [NSNumber numberWithInt:heightSize]];
 }
 
 - (void)setZoomLevel:(CGFloat)zoom Result:(FLTThreadSafeFlutterResult *)result {
@@ -1007,9 +1012,12 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (Array<int>) getCameraResolutionFactor {
-  return [int (_captureDevice.activeFormat.highResolutionStillImageDimensions.width),
-          int (_captureDevice.activeFormat.highResolutionStillImageDimensions.height)];
+- (int)getResolutionWidth {
+  return _captureDevice.activeFormat.highResolutionStillImageDimensions.width;
+}
+
+- (int)getResolutionHeight {
+  return _captureDevice.activeFormat.highResolutionStillImageDimensions.height;
 }
 
 - (BOOL)setupWriterForPath:(NSString *)path {
