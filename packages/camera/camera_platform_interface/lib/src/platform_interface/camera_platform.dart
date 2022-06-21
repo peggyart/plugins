@@ -251,7 +251,7 @@ abstract class CameraPlatform extends PlatformInterface {
   }
 
     /// Get the current resolution of this camera.
-  Future<List<double>?> getCameraResolution() {
+  Future<List<int>?> getCameraResolution() {
     throw UnimplementedError('getCameraResolution() is not implemented.');
   }
 }

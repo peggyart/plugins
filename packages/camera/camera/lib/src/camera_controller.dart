@@ -856,7 +856,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   }
 
   /// Get the device resolution from the current camera.
-  Future<Size?> getCameraResolution() async {
+  Future<List<int>?> getCameraResolution() async {
     _throwIfNotInitialized('getCameraResolution');
     try {
       return await CameraPlatform.instance.getCameraResolution();

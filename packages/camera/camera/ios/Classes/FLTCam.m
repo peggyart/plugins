@@ -963,7 +963,7 @@ NSString *const errorMethod = @"error";
 }
 
 - (void)getCameraResolutionWithResult:(FLTThreadSafeFlutterResult *)result {
-  CGSize resolutionSize = [self getCameraResolutionFactor];
+  Array<int> resolutionSize = [self getCameraResolutionFactor];
   [result sendSuccessWithData:@(resolutionSize)];
 }
 
@@ -1007,9 +1007,9 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (CGSize)getCameraResolutionFactor {
-  return CGSizeMake((_captureDevice.activeFormat.highResolutionStillImageDimensions.width * 1.25),
-                     _captureDevice.activeFormat.highResolutionStillImageDimensions.width);
+- (Array<int>) getCameraResolutionFactor {
+  return [int (_captureDevice.activeFormat.highResolutionStillImageDimensions.width),
+          int (_captureDevice.activeFormat.highResolutionStillImageDimensions.height)];
 }
 
 - (BOOL)setupWriterForPath:(NSString *)path {

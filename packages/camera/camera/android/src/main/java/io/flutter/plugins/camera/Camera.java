@@ -1015,8 +1015,9 @@ class Camera
   }
 
   /** Get the Capture size resolution */
-  public Size getCameraResolution() {
-    return cameraFeatures.getResolution().getCaptureSize();
+  public List<int>? getCameraResolution() {
+    return [cameraFeatures.getResolution().getCaptureSize().width,
+            cameraFeatures.getResolution().getCaptureSize().height];
   }
 
   /** Shortcut to get current recording profile. Legacy method provides support for SDK < 31. */
