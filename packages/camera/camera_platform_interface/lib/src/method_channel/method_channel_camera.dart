@@ -532,4 +532,11 @@ class MethodChannelCamera extends CameraPlatform {
         throw MissingPluginException();
     }
   }
+
+  @override
+  Future<Size?> getCameraResolution() async {
+    return await _channel.invokeMethod<Size>(
+      'getCameraResolution',
+    );
+  }
 }
