@@ -230,6 +230,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     this.resolutionPreset, {
     this.enableAudio = true,
     this.imageFormatGroup,
+    this.resolution,
   }) : super(const CameraValue.uninitialized());
 
   /// The properties of the camera device controlled by this controller.
@@ -250,6 +251,9 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// When null the imageFormat will fallback to the platforms default.
   final ImageFormatGroup? imageFormatGroup;
+
+  /// The camera resolution required to create a Fingerprint.
+  final int? resolution;
 
   /// The id of a camera that hasn't been initialized.
   @visibleForTesting
@@ -298,6 +302,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         description,
         resolutionPreset,
         enableAudio: enableAudio,
+        resolution: resolution,
       );
 
       _unawaited(CameraPlatform.instance
