@@ -48,7 +48,7 @@ abstract class CameraPlatform extends PlatformInterface {
   /// Creates an uninitialized camera instance and returns the cameraId.
   Future<int> createCamera(
       CameraDescription cameraDescription, ResolutionPreset? resolutionPreset,
-      {bool enableAudio = false, bool isLandscape = false}) {
+      {bool enableAudio = false, bool isLandscape = false, int? resolution}) {
     throw UnimplementedError('createCamera() is not implemented.');
   }
 
@@ -248,14 +248,6 @@ abstract class CameraPlatform extends PlatformInterface {
   /// Releases the resources of this camera.
   Future<void> dispose(int cameraId) {
     throw UnimplementedError('dispose() is not implemented.');
-  }
-
-  /// Set a minimum allowed [resolution] to the camera which will block
-  /// any device where the capture resolution is less than the needed.
-  /// 
-  /// If no resolution is set, then any device will be valid.
-  Future<void> setMinResolution({int? resolution}) async {
-    throw UnimplementedError('setMinResolution() is not implemented.');
   }
 
   /// Get the current resolution of this camera.

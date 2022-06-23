@@ -201,10 +201,8 @@
       [_camera getMaxZoomLevelWithResult:result];
     } else if ([@"getMinZoomLevel" isEqualToString:call.method]) {
       [_camera getMinZoomLevelWithResult:result];
-    } else if ([@"getResolutionWidth" isEqualToString:call.method]) {
-      [_camera getResolutionWidthWithResult:result];
-    } else if ([@"getResolutionHeight" isEqualToString:call.method]) {
-      [_camera getResolutionHeightWithResult:result];
+    } else if ([@"isResolutionEnough" isEqualToString:call.method]) {
+      [_camera isResolutionEnoughWithResult:result];
     } else if ([@"setZoomLevel" isEqualToString:call.method]) {
       CGFloat zoom = ((NSNumber *)argsMap[@"zoom"]).floatValue;
       [_camera setZoomLevel:zoom Result:result];
@@ -288,10 +286,12 @@
     NSString *cameraName = createMethodCall.arguments[@"cameraName"];
     NSString *resolutionPreset = createMethodCall.arguments[@"resolutionPreset"];
     NSNumber *enableAudio = createMethodCall.arguments[@"enableAudio"];
+    NSInteger *resolution = createMethodCall.arguments[@"resolution"];
     NSError *error;
     FLTCam *cam = [[FLTCam alloc] initWithCameraName:cameraName
                                     resolutionPreset:resolutionPreset
                                          enableAudio:[enableAudio boolValue]
+                                         resolution:[resolution integerValue]
                                          orientation:[[UIDevice currentDevice] orientation]
                                  captureSessionQueue:self.captureSessionQueue
                                                error:&error];

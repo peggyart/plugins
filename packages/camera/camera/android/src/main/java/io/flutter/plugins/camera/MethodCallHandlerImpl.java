@@ -294,24 +294,12 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
           }
           break;
         }
-        case "getResolutionWidth":
+        case "isResolutionEnough":
         {
           assert camera != null;
 
           try {
-           int cameraResolution = camera.getResolutionWidth();
-            result.success(cameraResolution);
-          } catch (Exception e) {
-            handleException(e, result);
-          }
-          break;
-        }
-        case "getResolutionHeight":
-        {
-          assert camera != null;
-
-          try {
-            int cameraResolution = camera.getResolutionHeight();
+           bool cameraResolution = camera.isResolutionEnough();
             result.success(cameraResolution);
           } catch (Exception e) {
             handleException(e, result);
@@ -398,6 +386,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     String cameraName = call.argument("cameraName");
     String preset = call.argument("resolutionPreset");
     boolean enableAudio = call.argument("enableAudio");
+    int resolution = call.argument("resolution");
 
     TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture =
         textureRegistry.createSurfaceTexture();
@@ -416,7 +405,8 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
             dartMessenger,
             cameraProperties,
             resolutionPreset,
-            enableAudio);
+            enableAudio,
+            resolution);
 
     Map<String, Object> reply = new HashMap<>();
     reply.put("cameraId", flutterSurfaceTexture.id());

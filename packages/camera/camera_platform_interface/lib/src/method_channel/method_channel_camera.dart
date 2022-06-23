@@ -81,6 +81,7 @@ class MethodChannelCamera extends CameraPlatform {
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
     bool isLandscape = false,
+    int? resolution,
   }) async {
     try {
       final Map<String, dynamic>? reply = await _channel
@@ -91,6 +92,7 @@ class MethodChannelCamera extends CameraPlatform {
             : null,
         'enableAudio': enableAudio,
         'isLandscape': isLandscape,
+        'resolution': resolution,
       });
 
       return reply!['cameraId']! as int;
@@ -531,14 +533,6 @@ class MethodChannelCamera extends CameraPlatform {
       default:
         throw MissingPluginException();
     }
-  }
-
-  @override
-  Future<void> setMinResolution({int? resolution}) async {
-    await _channel.invokeMethod<double>(
-      'setMinResolution',
-      <String, dynamic>{'resolution': resolution},
-    );
   }
 
   @override

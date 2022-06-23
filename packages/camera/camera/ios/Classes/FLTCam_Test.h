@@ -49,6 +49,7 @@
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
                        enableAudio:(BOOL)enableAudio
+                       resolution:(NSInteger *)resolution
                        orientation:(UIDeviceOrientation)orientation
                     captureSession:(AVCaptureSession *)captureSession
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue

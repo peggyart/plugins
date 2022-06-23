@@ -40,6 +40,7 @@
 
 @property(readonly, nonatomic) int64_t textureId;
 @property BOOL enableAudio;
+@property int resolution;
 @property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
 @property(readonly, nonatomic) AVCaptureSession *captureSession;
 
@@ -92,12 +93,14 @@ NSString *const errorMethod = @"error";
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
                        enableAudio:(BOOL)enableAudio
+                       resolution:(NSInteger *)resolution
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
   return [self initWithCameraName:cameraName
                  resolutionPreset:resolutionPreset
                       enableAudio:enableAudio
+                       resolution:resolution
                       orientation:orientation
                    captureSession:[[AVCaptureSession alloc] init]
               captureSessionQueue:captureSessionQueue
@@ -107,6 +110,7 @@ NSString *const errorMethod = @"error";
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
                        enableAudio:(BOOL)enableAudio
+                       resolution:(NSInteger *)resolution
                        orientation:(UIDeviceOrientation)orientation
                     captureSession:(AVCaptureSession *)captureSession
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
@@ -118,6 +122,7 @@ NSString *const errorMethod = @"error";
   } @catch (NSError *e) {
     *error = e;
   }
+  _resolution = resolution;
   _enableAudio = enableAudio;
   _captureSessionQueue = captureSessionQueue;
   _pixelBufferSynchronizationQueue =
@@ -962,14 +967,9 @@ NSString *const errorMethod = @"error";
   [result sendSuccessWithData:[NSNumber numberWithFloat:minZoomFactor]];
 }
 
-- (void)getResolutionWidthWithResult:(FLTThreadSafeFlutterResult *)result {
-  int widthSize = [self getResolutionWidth];
-  [result sendSuccessWithData: [NSNumber numberWithInt:widthSize]];
-}
-
-- (void)getResolutionHeightWithResult:(FLTThreadSafeFlutterResult *)result {
-  int heightSize = [self getResolutionHeight];
-  [result sendSuccessWithData: [NSNumber numberWithInt:heightSize]];
+- (void)isResolutionEnoughWithResult:(FLTThreadSafeFlutterResult *)result {
+  bool isEnough = [self isResolutionEnough];
+  [result sendSuccessWithData:@(isEnough)];
 }
 
 - (void)setZoomLevel:(CGFloat)zoom Result:(FLTThreadSafeFlutterResult *)result {
@@ -1012,12 +1012,10 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (int)getResolutionWidth {
-  return _captureDevice.activeFormat.highResolutionStillImageDimensions.width;
-}
-
-- (int)getResolutionHeight {
-  return _captureDevice.activeFormat.highResolutionStillImageDimensions.height;
+- (BOOL)isResolutionEnough {
+  if(_res == nil) return true;
+  return _captureDevice.activeFormat.highResolutionStillImageDimensions.width >= _resolution &&
+          _captureDevice.activeFormat.highResolutionStillImageDimensions.height >= _resolution;
 }
 
 - (BOOL)setupWriterForPath:(NSString *)path {

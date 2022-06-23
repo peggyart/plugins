@@ -157,9 +157,11 @@ class Camera
   private CameraCaptureProperties captureProps;
 
   private MethodChannel.Result flutterResult;
+  
+  private List<Size> availableResolutions;
+  private int resolution;
   private int widthSize;
   private int heightSize;
-  private List<Size> availableResolutions;
 
   /** A CameraDeviceWrapper implementation that forwards calls to a CameraDevice. */
   private class DefaultCameraDeviceWrapper implements CameraDeviceWrapper {
@@ -206,11 +208,13 @@ class Camera
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
       final ResolutionPreset resolutionPreset,
-      final boolean enableAudio) {
+      final boolean enableAudio,
+      final int resolution) {
 
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
     }
+    this.resolution = resolution;
     this.activity = activity;
     this.enableAudio = enableAudio;
     this.flutterTexture = flutterTexture;
@@ -1015,14 +1019,11 @@ class Camera
     return cameraFeatures.getZoomLevel().getMinimumZoomLevel();
   }
 
-  /** Get the resolution width size */
-  public int getResolutionWidth() {
-    return availableResolutions.get(0).getWidth();
-  }
-
-  /** Get the resolution height size */
-  public int getResolutionHeight() {
-    return availableResolutions.get(0).getHeight();
+  /** Get the device resolution from the current camera */
+  public boolean isResolutionEnough() {
+    if(resolution == null) return true;
+    return availableResolutions.get(0).getWidth() >= resolution && 
+            availableResolutions.get(0).getHeight() >= resolution;
   }
 
   /** Shortcut to get current recording profile. Legacy method provides support for SDK < 31. */
