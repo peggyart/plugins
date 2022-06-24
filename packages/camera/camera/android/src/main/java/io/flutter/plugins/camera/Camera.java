@@ -157,8 +157,11 @@ class Camera
   private CameraCaptureProperties captureProps;
 
   private MethodChannel.Result flutterResult;
+
+  private List<Size> availableResolutions;
   private int widthSize;
   private int heightSize;
+  private int resolution;
 
   /** A CameraDeviceWrapper implementation that forwards calls to a CameraDevice. */
   private class DefaultCameraDeviceWrapper implements CameraDeviceWrapper {
@@ -210,6 +213,7 @@ class Camera
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
     }
+    this.resolution = 0;
     this.activity = activity;
     this.enableAudio = enableAudio;
     this.flutterTexture = flutterTexture;
@@ -298,7 +302,7 @@ class Camera
     }
 
     CameraManager cameraManager = CameraUtils.getCameraManager(activity);
-    final List<Size> availableResolutions = getAvailableResolutions(cameraManager);
+    this.availableResolutions = getAvailableResolutions(cameraManager);
 
     // Always capture using JPEG format.
     pictureImageReader =
@@ -1277,5 +1281,19 @@ class Camera
       return Long.signum(
               (long) lhs.getWidth() * lhs.getHeight() - (long) rhs.getWidth() * rhs.getHeight());
     }
+  }
+
+  /** Set a minimum required resolution to create a fingerprint.
+   */
+  public void setMinimumResolution(int resolution) {
+    this.resolution = resolution;
+  }
+
+  /** Check if the camera of the device has enough resolution 
+  */
+  public boolean isCameraEnough() {
+    if(this.resolution == 0) return true;
+    return availableResolutions.get(0).getWidth() > this.resolution &&
+            availableResolutions.get(0).getHeight() > this.resolution;
   }
 }
