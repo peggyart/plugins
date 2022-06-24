@@ -532,4 +532,31 @@ class MethodChannelCamera extends CameraPlatform {
         throw MissingPluginException();
     }
   }
+
+  @override
+  Future<void> setMinimumResolution(int resolution) async {
+    try {
+      await _channel.invokeMethod<double>(
+        'setMinimumResolution',
+        <String, dynamic>{
+          'resolution': resolution,
+        },
+      );
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Check if the camera is enough when [setMinimumResolution]
+  /// has been added.
+  @override
+  Future<bool> isCameraEnough() async {
+    try {
+      final bool? isEnough =
+          await _channel.invokeMethod<bool>('isCameraEnough');
+      return isEnough ?? false;
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
 }

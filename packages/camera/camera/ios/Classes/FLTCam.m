@@ -83,6 +83,8 @@
 /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
 @property(strong, nonatomic) dispatch_queue_t photoIOQueue;
 @property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
+
+@property int resolution;
 @end
 
 @implementation FLTCam
@@ -1097,5 +1099,20 @@ NSString *const errorMethod = @"error";
       _isAudioSetup = NO;
     }
   }
+}
+
+- (void)setMinimumResolution:(int)resolution Result:(FLTThreadSafeFlutterResult *)result {
+  _resolution = resolution;
+  [result sendSuccess];
+}
+
+- (void)isCameraEnoughWithResult:(FLTThreadSafeFlutterResult *)result {
+  if(_resolution == nil) {
+    [result sendSuccessWithData:@(true)];
+  }
+
+  BOOL isEnough = _captureDevice.activeFormat.highResolutionStillImageDimensions.width >= _resolution &&
+                  _captureDevice.activeFormat.highResolutionStillImageDimensions.height >= _resolution;
+  [result sendSuccessWithData:@(isEnough)];
 }
 @end

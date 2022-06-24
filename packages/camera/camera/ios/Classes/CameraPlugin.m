@@ -245,6 +245,11 @@
       [_camera pausePreviewWithResult:result];
     } else if ([@"resumePreview" isEqualToString:call.method]) {
       [_camera resumePreviewWithResult:result];
+    } else if ([@"setMinimumResolution" isEqualToString:call.method]) {
+      int resolution = ((NSNumber *)argsMap[@"resolution"]).integerValue;
+      [_camera setMinimumResolution:resolution Result:result];
+    } else if ([@"isCameraEnough" isEqualToString:call.method]) {
+      [_camera isCameraEnoughWithResult:result];
     } else {
       [result sendNotImplemented];
     }

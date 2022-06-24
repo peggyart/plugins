@@ -249,4 +249,15 @@ abstract class CameraPlatform extends PlatformInterface {
   Future<void> dispose(int cameraId) {
     throw UnimplementedError('dispose() is not implemented.');
   }
+
+  /// Set the minimum acceptable camera resolution
+  Future<void> setMinimumResolution(int resolution) {
+    throw UnimplementedError('setMinimumResolution() is not implemented.');
+  }
+
+  /// Check if the camera is enough when [setMinimumResolution]
+  /// has been added.
+  Future<bool> isCameraEnough() {
+    throw UnimplementedError('isCameraEnough() is not implemented.');
+  }
 }
