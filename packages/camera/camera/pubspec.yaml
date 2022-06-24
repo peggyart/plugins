@@ -26,11 +26,11 @@ flutter:
 
 dependencies:
   camera_platform_interface: 
-    # git:
-    #   url: https://github.com/peggyart/plugins.git
-    #   ref: peggy-camera-v1
-    #   path: packages/camera/camera_platform_interface
-      path: ../camera_platform_interface
+    git:
+      url: https://github.com/peggyart/plugins.git
+      ref: peggy-camera-v1
+      path: packages/camera/camera_platform_interface
+      # path: ../camera_platform_interface
   flutter:
     sdk: flutter
   flutter_plugin_android_lifecycle: ^2.0.2
