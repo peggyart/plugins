@@ -6,15 +6,21 @@ import 'package:flutter/material.dart';
 
 /// Home Page of the application
 class HomePage extends StatelessWidget {
+  /// Default Constructor
+  const HomePage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final ButtonStyle style = ElevatedButton.styleFrom(
+      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
+      // ignore: deprecated_member_use
       primary: Colors.blue,
+      // ignore: deprecated_member_use
       onPrimary: Colors.white,
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text('File Selector Demo Home Page'),
+        title: const Text('File Selector Demo Home Page'),
       ),
       body: Center(
         child: Column(
@@ -22,31 +28,31 @@ class HomePage extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               style: style,
-              child: Text('Open a text file'),
+              child: const Text('Open a text file'),
               onPressed: () => Navigator.pushNamed(context, '/open/text'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               style: style,
-              child: Text('Open an image'),
+              child: const Text('Open an image'),
               onPressed: () => Navigator.pushNamed(context, '/open/image'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               style: style,
-              child: Text('Open multiple images'),
+              child: const Text('Open multiple images'),
               onPressed: () => Navigator.pushNamed(context, '/open/images'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               style: style,
-              child: Text('Save a file'),
+              child: const Text('Save a file'),
               onPressed: () => Navigator.pushNamed(context, '/save/text'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               style: style,
-              child: Text('Open a get directory dialog'),
+              child: const Text('Open a get directory dialog'),
               onPressed: () => Navigator.pushNamed(context, '/directory'),
             ),
           ],

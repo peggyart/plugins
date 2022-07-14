@@ -14,7 +14,7 @@ class XTypeGroup {
     this.mimeTypes,
     this.macUTIs,
     this.webWildCards,
-  }) : this.extensions = _removeLeadingDots(extensions);
+  }) : extensions = _removeLeadingDots(extensions);
 
   /// The 'name' or reference to this group of types
   final String? label;
@@ -42,6 +42,15 @@ class XTypeGroup {
     };
   }
 
-  static List<String>? _removeLeadingDots(List<String>? exts) =>
-      exts?.map((ext) => ext.startsWith('.') ? ext.substring(1) : ext).toList();
+  /// True if this type group should allow any file.
+  bool get allowsAny {
+    return (extensions?.isEmpty ?? true) &&
+        (mimeTypes?.isEmpty ?? true) &&
+        (macUTIs?.isEmpty ?? true) &&
+        (webWildCards?.isEmpty ?? true);
+  }
+
+  static List<String>? _removeLeadingDots(List<String>? exts) => exts
+      ?.map((String ext) => ext.startsWith('.') ? ext.substring(1) : ext)
+      .toList();
 }

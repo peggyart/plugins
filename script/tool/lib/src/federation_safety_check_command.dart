@@ -8,7 +8,6 @@ import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'common/core.dart';
 import 'common/file_utils.dart';
@@ -81,7 +80,8 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       // Count the top-level plugin as changed.
       _changedPlugins.add(packageName);
       if (relativeComponents[0] == packageName ||
-          relativeComponents[0].startsWith('${packageName}_')) {
+          (relativeComponents.length > 1 &&
+              relativeComponents[0].startsWith('${packageName}_'))) {
         packageName = relativeComponents.removeAt(0);
       }
 
@@ -109,7 +109,7 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       return PackageResult.skip('Not a federated plugin.');
     }
 
-    if (package.directory.basename.endsWith('_platform_interface')) {
+    if (package.isPlatformInterface) {
       // As the leaf nodes in the graph, a published package interface change is
       // assumed to be correct, and other changes are validated against that.
       return PackageResult.skip(
@@ -178,6 +178,10 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       String pubspecRepoRelativePosixPath) async {
     final File pubspecFile = childFileWithSubcomponents(
         packagesDir.parent, p.posix.split(pubspecRepoRelativePosixPath));
+    if (!pubspecFile.existsSync()) {
+      // If the package was deleted, nothing will be published.
+      return false;
+    }
     final Pubspec pubspec = Pubspec.parse(pubspecFile.readAsStringSync());
     if (pubspec.publishTo == 'none') {
       return false;
